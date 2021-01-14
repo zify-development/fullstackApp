@@ -1,4 +1,3 @@
-import React, { Fragment, Suspense, lazy } from "react";
 import { Route, Switch } from "react-router-dom";
 import SignInPage from './pages/SignInPage';
 import RegisterPage from './pages/RegisterPage';

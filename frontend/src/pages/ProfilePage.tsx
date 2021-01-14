@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
-import { Grid, Paper } from '@material-ui/core';
-// import { Formik, Form, Field } from 'formik';
-// import { TextField } from 'formik-material-ui';
+import React, { useState, useEffect } from 'react';
+import { Grid, Paper, Typography } from '@material-ui/core';
+
 import { useHistory } from 'react-router-dom';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 // import { IFLoginFormValues } from '../types/FormTypes';
-import ProfileAppBar from '../components/profile/ProfileAppBar';
+import ProfileAppBar from '../components/AppBar';
+import UserInfoFormik from '../components/Forms/UserInfoFormik';
+import { getUsersInfo, IFUserInfo, createUserInfo, updateUserInfo } from '../services/userInfoAPI';
 
+
+interface IFUserData {
+  email: string,
+  _id: string
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -14,7 +20,13 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
     },
     paper: {
+      display: 'flex',
+      height: '100%',
+      flexDirection: 'column',
+      alignItems: 'center',
       padding: theme.spacing(2),
+      margin: theme.spacing(2),
+      marginBottom: 0,
       textAlign: 'center',
       color: theme.palette.text.secondary,
     },
@@ -23,25 +35,29 @@ const useStyles = makeStyles((theme: Theme) =>
 
  const ProfilePage = () => {
   const classes = useStyles();
-  const history = useHistory();
-  const [userData, setUserData] = useState(history.location.state)
-  console.warn(userData, "history");
+  const history = useHistory<IFUserData>();
+  const [userData, setUserData] = useState(history.location.state);
+  const [userInfo, setUserInfo] = useState<IFUserInfo>();
+
+  console.warn(userData._id, "id");
   return (
     <div className={classes.root}>
-      <ProfileAppBar />
-      {/* <Grid container spacing={3}>
-        <Grid item xs={2}>
+      <ProfileAppBar userEmail={userData.email} />
+      <Grid container>
+        <Grid item xs={3} >
           <Paper className={classes.paper}>
-            <ProfileAvatar />
+            side menu
           </Paper>
         </Grid>
-        <Grid item xs={8}>
-          <Paper className={classes.paper}>xs</Paper>
+        <Grid item xs={9} >
+          <Paper className={classes.paper}>
+            <Typography variant="h3" align="center" color="textPrimary">
+              Osobní informace
+            </Typography>
+            <UserInfoFormik />
+          </Paper>
         </Grid>
-        <Grid item xs={2}>
-          <Paper className={classes.paper}>xs</Paper>
-        </Grid>
-      </Grid> */}
+      </Grid>
     </div>
   );
 }

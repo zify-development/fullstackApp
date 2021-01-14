@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
     backgroundSize: 'auto',
-    backgroundPosition: 'center',
+    backgroundPosition: 'cover',
   },
   paper: {
     margin: theme.spacing(8, 4),
@@ -47,8 +47,8 @@ const useStyles = makeStyles((theme) => ({
   let history = useHistory();
   const hanleLogin = async (data: IFUser) => {
     let login = await loginUser.login(data);
-    if (login.loginSucces) {
-      history.push('/profile', login);
+    if (login.loginUserSucces) {
+      history.push('/profile', login.correctUser);
     }
   }
   return (

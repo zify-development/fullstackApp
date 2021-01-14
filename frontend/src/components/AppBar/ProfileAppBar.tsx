@@ -4,7 +4,7 @@ import { AppBar, Toolbar, IconButton, Typography, Badge, MenuItem, Menu } from '
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import ProfileAvatar from './ProfileAvatar';
+import ProfileAvatar from '../Avatar';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -54,7 +54,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ProfileAppBar = () => {
+const ProfileAppBar = (props: any) => {
+  const { userEmail } = props;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -129,7 +130,7 @@ const ProfileAppBar = () => {
           aria-haspopup="true"
           color="inherit"
         >
-          <ProfileAvatar />
+          <ProfileAvatar email={userEmail} />
         </IconButton>
         <p>Profile</p>
       </MenuItem>
@@ -141,7 +142,7 @@ const ProfileAppBar = () => {
       <AppBar position="static" classes={{root: classes.appBar}}>
         <Toolbar>
           <div className={classes.logoCircle}>
-            <img className={classes.logoImage} src="http://icoders.cz/img/icoders-logo.png" />
+            <img className={classes.logoImage} src="http://icoders.cz/img/icoders-logo.png" alt="logo" />
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
@@ -163,7 +164,7 @@ const ProfileAppBar = () => {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <ProfileAvatar />
+              <ProfileAvatar email={userEmail} />
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>

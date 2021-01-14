@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'auto',
+    backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
   paper: {
@@ -49,13 +49,12 @@ const useStyles = makeStyles((theme) => ({
 
   const hanleRegister = async (data: IFUser) => {
     let register = await createUser.create(data);
-    if (register.registerSucces) {
-      let login = await loginUser.login(register.registerUser);
-      if (login.loginSucces) {
-        history.push('/profile');
+    if (register.registerUserSucces) {
+      let login = await loginUser.login(data)
+      if (login.loginUserSucces) {
+        history.push('/profile', login.correctUser);
       }
     }
-    console.warn(register, "login data");
   }
   return (
     <Grid container component="main" className={classes.root}>
