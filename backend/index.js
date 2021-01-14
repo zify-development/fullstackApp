@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors')
 
 require('./models/User');
+require('./models/UserInfo');
 
 const app = express();
 
@@ -21,6 +22,8 @@ app.listen(PORT, () => {
 });
 
 require('./routes/userRoutes')(app);
+require('./routes/userInfoRoutes')(app);
+
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));

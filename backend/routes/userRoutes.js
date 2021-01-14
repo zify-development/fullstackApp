@@ -1,55 +1,49 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
 
+
 module.exports = (app) => {
 
+  // endpoint for get user all users
   app.get(`/api/users`, async (req, res) => {
     const user = await User.find();
     return res.status(200).send(user);
   });
 
+  // endpoint for login user
   app.post(`/api/user/login`, async (req, res) => {
     const users = await User.find();
     const reqBody = req.body;
+
     const correctUser = users.find(user => user.email === reqBody.email && user.password === reqBody.password);
+
     if (correctUser) {
       return res.status(200).send({
         error: false,
-        loginSucces: true,
+        loginUserSucces: true,
         correctUser
-      });
-    } else {
-      return res.status(201).send({
-        error: true,
-        loginSucces: false,
       });
     }
   });
 
+  // endpoint for register new user
   app.post(`/api/user`, async (req, res) => {
     const users = await User.find();
     const reqBody = req.body;
-    const correctReqBody = {
-      email: reqBody.email,
-      password: reqBody.password
-    };
-    const existUser = users.find(user => user.email === correctReqBody.email);
+
+    const existUser = users.find(user => user.email === reqBody.email);
     if (!existUser) {
-      const registerUser = await User.create(correctReqBody);
+      const registerUser = await User.create(reqBody);
       return res.status(201).send({
         error: false,
-        registerSucces: true,
+        registerUserSucces: true,
         registerUser
-      })
-    } else {
-      return res.status(403).send({
-        error: true,
-        registerSucces: false,
       })
     }
     
   })
 
+  // endpoint for update user by id
   app.put(`/api/user/:id`, async (req, res) => {
     const {id} = req.params;
 
@@ -57,20 +51,21 @@ module.exports = (app) => {
 
     return res.status(202).send({
       error: false,
+      updateUserSucces: true,
       user
     })
   });
 
-  app.delete(`/api/user/:id`, async (req, res) => {
-    const {id} = req.params;
+  // app.delete(`/api/user/:id`, async (req, res) => {
+  //   const {id} = req.params;
 
-    let user = await User.findByIdAndDelete(id);
+  //   let user = await User.findByIdAndDelete(id);
 
-    return res.status(202).send({
-      error: false,
-      user
-    })
+  //   return res.status(202).send({
+  //     error: false,
+  //     user
+  //   })
 
-  })
+  // })
 
 }
