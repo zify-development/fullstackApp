@@ -4,8 +4,8 @@ const {Schema} = mongoose;
 const userInfoSchema = new Schema({
     firstName: String,
     lastName: String,
-    myMotivation: String,
     age: Number,
+    id: String
 })
 
-mongoose.model('usersInfo', userInfoSchema);
+mongoose.model('users_profile_datas', userInfoSchema);
