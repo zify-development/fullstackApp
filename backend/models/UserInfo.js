@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
+const {Schema, Types} = mongoose;
 
 const userInfoSchema = new Schema({
     firstName: String,
     lastName: String,
     age: Number,
-    id: String
+    id: {
+        unique: true,
+        type:Types.ObjectId,
+        ref: "users"
+    }
 })
 
 mongoose.model('users_profile_datas', userInfoSchema);

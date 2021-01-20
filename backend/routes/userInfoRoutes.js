@@ -6,9 +6,8 @@ module.exports = (app) => {
   // endpoint for get user info by id
   app.get(`/api/userInfo/:id`, async (req, res) => {
     const {id} = req.params;
-    const usersInfo = await UserInfo.find();
-    const correctUser = usersInfo.find(userInfo => userInfo.id === id);
-    return res.status(200).send(correctUser);
+    const userInfo = await UserInfo.findOne({id});
+    return res.status(200).send(userInfo);
   });
 
   // endpoint for create user info by id
@@ -32,9 +31,8 @@ module.exports = (app) => {
   // endpoint for update user info by id
   app.put(`/api/userInfo/:id`, async (req, res) => {
     const {id} = req.params;
-    const usersInfo = await UserInfo.find();
-    const correctUser = usersInfo.find(userInfo => userInfo.id === id);
-    let updateUserInfo = await UserInfo.findByIdAndUpdate(correctUser._id, req.body);
+    await UserInfo.updateOne({id},req.body);
+    const userInfo = await UserInfo.findOne({id})
 
     return res.status(200).send({
       error: false,
@@ -42,7 +40,7 @@ module.exports = (app) => {
         type: 'success',
         message: 'Změna byla úspěná'
       },
-      updateUserInfo
+      userInfo
     })
   });
 
