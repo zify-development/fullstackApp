@@ -1,56 +1,79 @@
-import React from 'react';
-import { Button, Avatar, CssBaseline, Grid, Paper, Typography, LinearProgress  } from '@material-ui/core';
-import { Formik, Form, Field } from 'formik';
-import { TextField } from 'formik-material-ui';
-import { Link, useHistory } from 'react-router-dom';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { makeStyles } from '@material-ui/core/styles';
-import { IFLoginFormValues } from '../types/FormTypes';
-import { loginUser, IFUser } from '../services/userAPI';
+import React from "react";
+import {
+  Button,
+  Avatar,
+  CssBaseline,
+  Grid,
+  Paper,
+  Typography,
+  LinearProgress,
+} from "@material-ui/core";
+import { Formik, Form, Field } from "formik";
+import { TextField } from "formik-material-ui";
+import { Link, useHistory } from "react-router-dom";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { makeStyles } from "@material-ui/core/styles";
+import { IFLoginFormValues } from "../types/FormTypes";
+import { loginUser, IFUser, getUserDataByToken } from "../services/userAPI";
+import { useUserData } from "../contexts/userContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100vh',
+    height: "100vh",
   },
   image: {
-    backgroundImage: 'url(http://icoders.cz/img/intro-bg.png)',
-    backgroundRepeat: 'no-repeat',
+    backgroundImage: "url(http://icoders.cz/img/intro-bg.png)",
+    backgroundRepeat: "no-repeat",
     backgroundColor:
-      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'auto',
-    backgroundPosition: 'cover',
+      theme.palette.type === "light"
+        ? theme.palette.grey[50]
+        : theme.palette.grey[900],
+    backgroundSize: "auto",
+    backgroundPosition: "cover",
   },
   paper: {
     margin: theme.spacing(8, 4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    backgroundColor: "#ffc000",
+    color: "#000",
+    "&:hover, &:focus": {
+      backgroundColor: "#ebb100",
+    },
   },
   link: {
-    color: '#16409f'
-  }
+    color: "#16409f",
+  },
 }));
 
- const SignInPage = () => {
+const SignInPage = () => {
   const classes = useStyles();
+  const userStore = useUserData().context.userToken;
   let history = useHistory();
+
   const hanleLogin = async (data: IFUser) => {
     let login = await loginUser.login(data);
-    if (login.loginUserSucces) {
-      history.push('/profile', login.correctUser);
+    const token = login.data.token;
+    if (token && !login.error) {
+      // const data = await getUserDataByToken.getData(token);
+      if (data) {
+        userStore.setUserToken(token);
+        history.push("/profile/info");
+      }
     }
-  }
+  };
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -65,22 +88,22 @@ const useStyles = makeStyles((theme) => ({
           </Typography>
           <Formik
             initialValues={{
-              email: '',
-              password: '',
+              email: "",
+              password: "",
             }}
-            validate={values => {
+            validate={(values) => {
               const errors: Partial<IFLoginFormValues> = {};
               if (!values.email) {
-                errors.email = 'Povinné pole';
+                errors.email = "Povinné pole";
               } else if (
                 !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
               ) {
-                errors.email = 'Nevalidní emailová adresa';
+                errors.email = "Nevalidní emailová adresa";
               }
               if (!values.password) {
-                errors.password = 'Povinné pole';
-              } else if(values.password.length < 8) {
-                errors.password = 'Heslo musí mít minimálně 8 znaků';
+                errors.password = "Povinné pole";
+              } else if (values.password.length < 8) {
+                errors.password = "Heslo musí mít minimálně 8 znaků";
               }
               return errors;
             }}
@@ -148,7 +171,6 @@ const useStyles = makeStyles((theme) => ({
       </Grid>
     </Grid>
   );
-}
+};
 
 export default SignInPage;
-

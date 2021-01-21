@@ -1,61 +1,102 @@
-import React from 'react';
-import { Button, LinearProgress, Avatar, CssBaseline, Grid, Paper, Typography  } from '@material-ui/core';
-import { Formik, Form, Field } from 'formik';
-import { TextField } from 'formik-material-ui';
-import { Link, useHistory } from 'react-router-dom';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { makeStyles } from '@material-ui/core/styles';
-import { IFRegisterFormValues } from '../types/FormTypes';
-import { createUser, loginUser, IFUser } from '../services/userAPI';
-
+import React, { useState } from "react";
+import {
+  Button,
+  LinearProgress,
+  Avatar,
+  CssBaseline,
+  Grid,
+  Paper,
+  Typography,
+  Snackbar,
+} from "@material-ui/core";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import { Formik, Form, Field } from "formik";
+import { TextField } from "formik-material-ui";
+import { Link, useHistory } from "react-router-dom";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { makeStyles } from "@material-ui/core/styles";
+import { IFRegisterFormValues } from "../types/FormTypes";
+import {
+  createUser,
+  loginUser,
+  IFUser,
+  getUserDataByToken,
+} from "../services/userAPI";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100vh',
+    height: "100vh",
   },
   image: {
-    backgroundImage: 'url(http://icoders.cz/img/intro-bg.png)',
-    backgroundRepeat: 'no-repeat',
+    backgroundImage: "url(http://icoders.cz/img/intro-bg.png)",
+    backgroundRepeat: "no-repeat",
     backgroundColor:
-      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+      theme.palette.type === "light"
+        ? theme.palette.grey[50]
+        : theme.palette.grey[900],
+    backgroundSize: "auto",
+    backgroundPosition: "cover",
   },
   paper: {
     margin: theme.spacing(8, 4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    backgroundColor: "#ffc000",
+    color: "#000",
+    "&:hover, &:focus": {
+      backgroundColor: "#ebb100",
+    },
   },
   link: {
-    color: '#16409f'
-  }
+    color: "#16409f",
+  },
 }));
 
- const RegisterPage = () => {
+const RegisterPage = () => {
   const classes = useStyles();
+  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [showMessage, setShowMessage] = useState(false);
+
   let history = useHistory();
+
+  const Alert = (props: AlertProps) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  };
 
   const hanleRegister = async (data: IFUser) => {
     let register = await createUser.create(data);
-    if (register.registerUserSucces) {
-      let login = await loginUser.login(data)
-      if (login.loginUserSucces) {
-        history.push('/profile', login.correctUser);
-      }
+    console.warn(register, "register");
+    if (register?.status === 400) {
+      setNotificationMessage(register?.data.error);
+      setShowMessage(true);
     }
-  }
+
+    // if (register.registerUserSucces) {
+    //   let login = await loginUser.login(data)
+    //   const token = login.data.token;
+    //   console.warn(token, "login token");
+    //   if (token && !login.error) {
+    //     const data = await getUserDataByToken.getData(token)
+    //     console.warn(data, "data from token");
+    //     if (data) {
+    //       // userStore.setUserData(login.correctUser);
+    //       // history.push('/profile/info');
+    //     }
+    //   }
+    // }
+  };
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -70,28 +111,28 @@ const useStyles = makeStyles((theme) => ({
           </Typography>
           <Formik
             initialValues={{
-              email: '',
-              password: '',
-              confirmPassword: ''
+              email: "",
+              password: "",
+              confirmPassword: "",
             }}
-            validate={values => {
+            validate={(values) => {
               const errors: Partial<IFRegisterFormValues> = {};
               if (!values.email) {
-                errors.email = 'Povinné pole';
+                errors.email = "Povinné pole";
               } else if (
                 !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
               ) {
-                errors.email = 'Nevalidní emailová adresa';
+                errors.email = "Nevalidní emailová adresa";
               }
               if (!values.password) {
-                errors.password = 'Povinné pole';
-              } else if(values.password.length < 8) {
-                errors.password = 'Heslo musí mít minimálně 8 znaků';
+                errors.password = "Povinné pole";
+              } else if (values.password.length < 8) {
+                errors.password = "Heslo musí mít minimálně 8 znaků";
               }
               if (!values.confirmPassword) {
-                errors.confirmPassword = 'Povinné pole';
-              } else if(values.password !== values.confirmPassword) {
-                errors.confirmPassword = 'Hesla se musí shodovat';
+                errors.confirmPassword = "Povinné pole";
+              } else if (values.password !== values.confirmPassword) {
+                errors.confirmPassword = "Hesla se musí shodovat";
               }
               return errors;
             }}
@@ -154,22 +195,32 @@ const useStyles = makeStyles((theme) => ({
               </Form>
             )}
           </Formik>
-            <Grid container>
-              <Grid item xs>
-                {/* <Link to="/forgotPassword">
+          <Grid container>
+            <Grid item xs>
+              {/* <Link to="/forgotPassword">
                   Zapomenuté heslo?
                 </Link> */}
-              </Grid>
-              <Grid item>
-                <Link className={classes.link} to="/login" >
-                  Máte účet? Přihlášení.
-                </Link>
-              </Grid>
             </Grid>
+            <Grid item>
+              <Link className={classes.link} to="/login">
+                Máte účet? Přihlášení.
+              </Link>
+            </Grid>
+          </Grid>
         </div>
       </Grid>
+
+      <Snackbar
+        open={showMessage}
+        autoHideDuration={6000}
+        onClose={() => setShowMessage(false)}
+      >
+        <Alert onClose={() => setShowMessage(false)} severity="error">
+          {notificationMessage}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
-}
+};
 
 export default RegisterPage;
