@@ -12,23 +12,41 @@ const verifyToken = (token) => {
 module.exports = (app) => {
   // endpoint for get user all users
   app.get(`/api/users`, async (req, res) => {
-    const user = await User.find();
-    return res.status(200).send(user);
+    if (req.headers && req.headers.authorization) {
+      let authorization = req.headers.authorization,
+        decoded;
+      const token = authorization.split(" ")[1];
+      try {
+        decoded = verifyToken(token);
+        if (decoded.role === "admin") {
+          const users = await User.find();
+          const notAdminUser = users.filter((u) => u.role !== "admin");
+          return res.status(200).send(notAdminUser);
+        } else {
+          return res.status(400).send("not admin");
+        }
+      } catch (e) {
+        return res.status(401).send("unauthorized");
+      }
+    } else {
+      return res.status(500).send("internal server error");
+    }
   });
 
   // register route
   app.post("/api/user/register", async (req, res) => {
     const isEmailExist = await User.findOne({ email: req.body.email });
-    if (isEmailExist)
+    if (isEmailExist) {
       return res
         .status(400)
         .send({ error: "Uživatel s tímto emailem už existuje" });
+    }
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(req.body.password, salt);
     const user = new User({
       email: req.body.email,
       password,
-      role: "admin",
+      role: "user",
     });
     try {
       const savedUser = await user.save();
@@ -50,7 +68,6 @@ module.exports = (app) => {
     );
     if (!validPassword)
       return res.status(400).send({ error: "Password is wrong" });
-    console.warn(user, "login");
     // create token
     const token = jwt.sign(
       // payload data
@@ -73,17 +90,19 @@ module.exports = (app) => {
 
   // get user data by token
   app.get("/api/user/data", async (req, res) => {
-    console.log(req.headers, "headers");
     if (req.headers && req.headers.authorization) {
       var authorization = req.headers.authorization,
         decoded;
-      console.log(authorization, "token");
+      const token = authorization.split(" ")[1];
+
       try {
-        decoded = verifyToken(authorization);
+        decoded = verifyToken(token);
         return res.status(200).send(decoded);
       } catch (e) {
         return res.status(401).send("unauthorized");
       }
+    } else {
+      return res.status(500).send("internal server error");
     }
   });
 

@@ -14,13 +14,16 @@ module.exports = (app) => {
     if (req.headers && req.headers.authorization) {
       let authorization = req.headers.authorization,
         decoded;
+      const token = authorization.split(" ")[1];
       try {
-        decoded = verifyToken(authorization);
+        decoded = verifyToken(token);
         const userInfo = await UserInfo.findOne({ id: decoded.id });
         return res.status(200).send(userInfo);
       } catch (e) {
         return res.status(401).send("unauthorized");
       }
+    } else {
+      return res.status(500).send("internal server error");
     }
   });
 
@@ -29,9 +32,9 @@ module.exports = (app) => {
     if (req.headers && req.headers.authorization) {
       let authorization = req.headers.authorization,
         decoded;
+      const token = authorization.split(" ")[1];
       try {
-        decoded = verifyToken(authorization);
-        console.warn(req, "req");
+        decoded = verifyToken(token);
         const reqBody = {
           ...req.body,
           id: decoded.id,
@@ -41,41 +44,42 @@ module.exports = (app) => {
           error: false,
           statusMessage: {
             type: "success",
-            message: "Změna byla úspěná",
+            message: "Úspěšně uloženo",
           },
           newUserInfo,
         });
       } catch (e) {
         return res.status(401).send("unauthorized");
       }
+    } else {
+      return res.status(500).send("internal server error");
     }
   });
 
   // endpoint for update user info by id
-  app.put(`/api/userInfo/:id`, async (req, res) => {
-    const { id } = req.params;
-    await UserInfo.updateOne({ id }, req.body);
-    const userInfo = await UserInfo.findOne({ id });
+  app.put(`/api/userInfo/`, async (req, res) => {
+    if (req.headers && req.headers.authorization) {
+      let authorization = req.headers.authorization,
+        decoded;
+      const token = authorization.split(" ")[1];
+      try {
+        decoded = verifyToken(token);
+        await UserInfo.updateOne({ id: decoded.id }, req.body);
+        const userInfo = await UserInfo.findOne({ id: decoded.id });
 
-    return res.status(200).send({
-      error: false,
-      statusMessage: {
-        type: "success",
-        message: "Změna byla úspěná",
-      },
-      userInfo,
-    });
+        return res.status(200).send({
+          error: false,
+          statusMessage: {
+            type: "success",
+            message: "Změna byla úspěná",
+          },
+          userInfo,
+        });
+      } catch (e) {
+        return res.status(401).send("unauthorized");
+      }
+    } else {
+      return res.status(500).send("internal server error");
+    }
   });
-
-  // app.delete(`/api/user/:id`, async (req, res) => {
-  //   const {id} = req.params;
-
-  //   let user = await User.findByIdAndDelete(id);
-
-  //   return res.status(202).send({
-  //     error: false,
-  //     user
-  //   })
-
-  // })
 };

@@ -21,6 +21,10 @@ const userSchema = new Schema({
   role: {
     type: String,
   },
+  blocked: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 mongoose.model("users", userSchema);
