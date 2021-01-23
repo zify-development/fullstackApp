@@ -11,11 +11,7 @@ export interface IFUserInfo {
 export const getUserInfo = {
   get: async (token: string) => {
     let res = await axios.get(`http://localhost:5000/api/userInfo/`, {
-      headers: {
-        authorization: token,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
   },
@@ -23,29 +19,18 @@ export const getUserInfo = {
 
 export const createUserInfo = {
   create: async (data: IFUserInfoFormValues, token: string) => {
-    await axios
-      .post(`http://localhost:5000/api/userInfo/`, {
-        data,
-        headers: {
-          authorization: token,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        console.warn(res, "res api");
-      });
+    let res = await axios.post(`http://localhost:5000/api/userInfo/`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
   },
 };
 
 export const updateUserInfo = {
   update: async (data: IFUserInfoFormValues, token: string) => {
-    console.warn(token, data, "gthuthg");
-
-    let res = await axios.put(
-      `http://localhost:5000/api/userInfo/${token}`,
-      data
-    );
+    let res = await axios.put(`http://localhost:5000/api/userInfo/`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return res.data;
   },
 };

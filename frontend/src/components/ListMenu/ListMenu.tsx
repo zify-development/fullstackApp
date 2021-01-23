@@ -12,7 +12,7 @@ import {
   PowerSettingsNew,
   SupervisorAccount,
 } from "@material-ui/icons";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useUserData } from "../../contexts/userContext";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -32,9 +32,14 @@ const useStyles = makeStyles((theme: Theme) =>
 const ListMenu = () => {
   const classes = useStyles();
   const userStore = useUserData().context.userData;
-  const admin = userStore.data?.role === "admin";
-  console.warn(admin, "admin");
+  const history = useHistory();
 
+  const logOutUser = () => {
+    sessionStorage.removeItem("token");
+    history.push("/");
+  };
+
+  const admin = userStore.data?.role === "admin";
   return (
     <div className={classes.root}>
       <List component="nav" aria-label="main mailbox folders">
@@ -67,7 +72,7 @@ const ListMenu = () => {
         <Divider />
         {admin && (
           <>
-            <Link className={classes.link} to="/admin">
+            <Link className={classes.link} to="/profile/admin">
               <ListItem button>
                 <ListItemIcon>
                   <SupervisorAccount />
@@ -77,14 +82,14 @@ const ListMenu = () => {
             </Link>
           </>
         )}
-        <Link className={classes.link} to="/">
+        <div className={classes.link} onClick={() => logOutUser()}>
           <ListItem button>
             <ListItemIcon>
               <PowerSettingsNew />
             </ListItemIcon>
             <ListItemText primary="Odhlášení" />
           </ListItem>
-        </Link>
+        </div>
       </List>
     </div>
   );

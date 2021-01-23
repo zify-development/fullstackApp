@@ -11,6 +11,7 @@ import { getUserInfo } from "../services/userInfoAPI";
 import Settings from "../components/Settings";
 import ChangePassword from "../components/ChangePassword";
 import { useUserData } from "../contexts/userContext";
+import AdminSection from "../components/AdminSection";
 
 export interface IFUserData {
   email?: string;
@@ -49,15 +50,13 @@ const useStyles = makeStyles((theme: Theme) =>
 const ProfilePage = () => {
   const classes = useStyles();
   const userStore = useUserData().context.userData;
-  const userTokenStore = useUserData().context.userToken;
   const userInfoStore = useUserData().context.userInfoData;
   const [updateForm, setUpdateForm] = useState(false);
-  console.warn(userTokenStore.autorizateToken, "data from token");
+  const token = sessionStorage.getItem("token");
 
   const getUserInfoData = async () => {
-    const autorizedToken = userTokenStore.autorizateToken;
-    if (autorizedToken) {
-      const getInfo = await getUserInfo.get(autorizedToken);
+    if (token) {
+      const getInfo = await getUserInfo.get(token);
       if (getInfo) {
         userInfoStore.setUserInfoData(getInfo);
       }
@@ -67,9 +66,8 @@ const ProfilePage = () => {
   };
 
   const getUserData = async () => {
-    const autorizedToken = userTokenStore.autorizateToken;
-    if (autorizedToken) {
-      const data = await getUserDataByToken.getData(autorizedToken);
+    if (token) {
+      const data = await getUserDataByToken.getData(token);
       if (data) {
         userStore.setUserData(data);
       }
@@ -108,7 +106,7 @@ const ProfilePage = () => {
     return (
       <UserInfoFormik
         formValues={userInfoStore.infoData}
-        userToken={userTokenStore.autorizateToken}
+        userToken={token}
         updatedForm={(updated) => setUpdateForm(!updated)}
       />
     );
@@ -129,11 +127,14 @@ const ProfilePage = () => {
   };
 
   const renderProfileRoutes = () => {
+    const admin = userStore.data?.role === "admin";
+
     return (
       <Switch>
         <Route path="/profile/info" component={UserInfo} />
         <Route path="/profile/settings" component={Settings} />
         <Route path="/profile/changePassword" component={ChangePassword} />
+        {admin && <Route path="/profile/admin" component={AdminSection} />}
       </Switch>
     );
   };

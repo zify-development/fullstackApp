@@ -9,7 +9,7 @@ import { IFUserInfoFormValues } from "../../../types/FormTypes";
 import { useUserData } from "../../../contexts/userContext";
 
 interface IFUserInfoFormikProps {
-  userToken?: string;
+  userToken?: string | null;
   formValues: IFUserInfoFormValues | undefined;
   updatedForm: (updated: boolean) => void;
 }
@@ -63,20 +63,22 @@ const UserInfoFormik = (props: IFUserInfoFormikProps) => {
   };
 
   const initialValues = formValues ?? defaultValues;
-  console.warn(formValues, "fjfhjfshl");
   const handleSubmitUserInfoData = async (data: IFUserInfoFormValues) => {
+    console.warn(formValues, "fjfhjfshl", userToken);
     if (!formValues?.firstName && userToken) {
       const createUserInfoData = await createUserInfo.create(data, userToken);
-      // setAlert(createUserInfoData.statusMessage);
-      console.warn(createUserInfoData, "info dkrdnjrnfd");
+      setAlert(createUserInfoData.statusMessage);
       setOpen(true);
+      if (createUserInfoData) {
+        userInfoStore.setUserInfoData(createUserInfoData.userInfo);
+      }
     } else if (userToken) {
       const updateUserInfoData = await updateUserInfo.update(data, userToken);
+      setAlert(updateUserInfoData.statusMessage);
+      setOpen(true);
       if (updateUserInfoData) {
         userInfoStore.setUserInfoData(updateUserInfoData.userInfo);
       }
-      setAlert(updateUserInfoData.statusMessage);
-      setOpen(true);
     }
     updatedForm(true);
   };
@@ -84,6 +86,7 @@ const UserInfoFormik = (props: IFUserInfoFormikProps) => {
   const Alert = (props: AlertProps) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   };
+  console.warn(alert, open, "alert");
 
   const classes = useStyles();
   return (

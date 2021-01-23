@@ -8,10 +8,6 @@ export const userDataContext = createContext<{
     infoData?: IFUserInfoFormValues;
     setUserInfoData: (infoData: IFUserInfoFormValues) => void;
   };
-  userToken: {
-    autorizateToken?: string;
-    setUserToken: (token: string) => void;
-  };
 }>({
   userData: {
     setUserData: () => {},
@@ -19,22 +15,17 @@ export const userDataContext = createContext<{
   userInfoData: {
     setUserInfoData: () => {},
   },
-  userToken: {
-    setUserToken: () => {},
-  },
 });
 
 const UserDataProvider: React.FC = ({ children }) => {
   const [data, setUserData] = useState<IFUserData>({});
   const [infoData, setUserInfoData] = useState<IFUserInfoFormValues>({});
-  const [autorizateToken, setUserToken] = useState<string>("");
 
   return (
     <userDataContext.Provider
       value={{
         userData: { data, setUserData },
         userInfoData: { infoData, setUserInfoData },
-        userToken: { autorizateToken, setUserToken },
       }}
     >
       {children}

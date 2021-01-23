@@ -14,7 +14,7 @@ import { Link, useHistory } from "react-router-dom";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { IFLoginFormValues } from "../types/FormTypes";
-import { loginUser, IFUser, getUserDataByToken } from "../services/userAPI";
+import { loginUser, IFUser } from "../services/userAPI";
 import { useUserData } from "../contexts/userContext";
 
 const useStyles = makeStyles((theme) => ({
@@ -60,16 +60,14 @@ const useStyles = makeStyles((theme) => ({
 
 const SignInPage = () => {
   const classes = useStyles();
-  const userStore = useUserData().context.userToken;
-  let history = useHistory();
-
+  const history = useHistory();
+  console.warn(sessionStorage.getItem("token"), "token?");
   const hanleLogin = async (data: IFUser) => {
     let login = await loginUser.login(data);
     const token = login.data.token;
     if (token && !login.error) {
-      // const data = await getUserDataByToken.getData(token);
       if (data) {
-        userStore.setUserToken(token);
+        sessionStorage.setItem("token", token);
         history.push("/profile/info");
       }
     }

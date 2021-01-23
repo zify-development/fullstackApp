@@ -16,12 +16,7 @@ import { Link, useHistory } from "react-router-dom";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { IFRegisterFormValues } from "../types/FormTypes";
-import {
-  createUser,
-  loginUser,
-  IFUser,
-  getUserDataByToken,
-} from "../services/userAPI";
+import { createUser, loginUser, IFUser } from "../services/userAPI";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,19 +78,16 @@ const RegisterPage = () => {
       setShowMessage(true);
     }
 
-    // if (register.registerUserSucces) {
-    //   let login = await loginUser.login(data)
-    //   const token = login.data.token;
-    //   console.warn(token, "login token");
-    //   if (token && !login.error) {
-    //     const data = await getUserDataByToken.getData(token)
-    //     console.warn(data, "data from token");
-    //     if (data) {
-    //       // userStore.setUserData(login.correctUser);
-    //       // history.push('/profile/info');
-    //     }
-    //   }
-    // }
+    if (!register.error) {
+      let login = await loginUser.login(data);
+      const token = login.data.token;
+      if (token && !login.error) {
+        if (data) {
+          sessionStorage.setItem("token", token);
+          history.push("/profile/info");
+        }
+      }
+    }
   };
   return (
     <Grid container component="main" className={classes.root}>
