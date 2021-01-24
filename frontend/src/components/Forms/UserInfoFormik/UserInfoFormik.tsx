@@ -64,7 +64,6 @@ const UserInfoFormik = (props: IFUserInfoFormikProps) => {
 
   const initialValues = formValues ?? defaultValues;
   const handleSubmitUserInfoData = async (data: IFUserInfoFormValues) => {
-    console.warn(formValues, "fjfhjfshl", userToken);
     if (!formValues?.firstName && userToken) {
       const createUserInfoData = await createUserInfo.create(data, userToken);
       setAlert(createUserInfoData.statusMessage);
@@ -86,7 +85,6 @@ const UserInfoFormik = (props: IFUserInfoFormikProps) => {
   const Alert = (props: AlertProps) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   };
-  console.warn(alert, open, "alert");
 
   const classes = useStyles();
   return (

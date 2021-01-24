@@ -16,6 +16,8 @@ const useStyles = makeStyles((theme: Theme) =>
 const AdminSection = () => {
   const classes = useStyles();
   const [allUsers, setAllUsers] = useState<[]>([]);
+  const [updateData, setUpdateData] = useState<boolean>(false);
+
   const token = sessionStorage.getItem("token");
 
   const getAllUsers = async () => {
@@ -31,15 +33,18 @@ const AdminSection = () => {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+    setUpdateData(false);
+  }, [updateData]);
 
-  console.warn(allUsers, "all");
   return (
     <div className={classes.root}>
       <Typography variant="h4" align="center" color="textPrimary">
         Admin sekce
       </Typography>
-      <AdminTable data={allUsers} />
+      <AdminTable
+        data={allUsers}
+        changeData={(change: boolean) => setUpdateData(change)}
+      />
     </div>
   );
 };

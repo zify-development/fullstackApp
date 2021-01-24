@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SyntheticEvent, useState } from "react";
 import {
   Button,
   Avatar,
@@ -7,15 +7,22 @@ import {
   Paper,
   Typography,
   LinearProgress,
+  Snackbar,
 } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import { Link, useHistory } from "react-router-dom";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { IFLoginFormValues } from "../types/FormTypes";
 import { loginUser, IFUser } from "../services/userAPI";
 import { useUserData } from "../contexts/userContext";
+
+interface IFStateAlert {
+  message?: string;
+  type?: "error" | "success";
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,15 +68,30 @@ const useStyles = makeStyles((theme) => ({
 const SignInPage = () => {
   const classes = useStyles();
   const history = useHistory();
-  console.warn(sessionStorage.getItem("token"), "token?");
-  const hanleLogin = async (data: IFUser) => {
+  const [open, setOpen] = useState(false);
+  const [alert, setAlert] = useState<IFStateAlert>({});
+
+  const Alert = (props: AlertProps) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  };
+
+  const handleClose = (event?: SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const handleLogin = async (data: IFUser) => {
     let login = await loginUser.login(data);
-    const token = login.data.token;
+    const token = login.data?.token;
     if (token && !login.error) {
-      if (data) {
-        sessionStorage.setItem("token", token);
-        history.push("/profile/info");
-      }
+      sessionStorage.setItem("token", token);
+      history.push("/profile/info");
+    } else {
+      setAlert(login.statusMessage);
+      setOpen(true);
     }
   };
   return (
@@ -108,7 +130,7 @@ const SignInPage = () => {
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
                 setSubmitting(false);
-                hanleLogin(values);
+                handleLogin(values);
               }, 500);
             }}
           >
@@ -167,6 +189,11 @@ const SignInPage = () => {
           </Grid>
         </div>
       </Grid>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={alert.type}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

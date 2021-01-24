@@ -26,6 +26,9 @@ const useStyles = makeStyles((theme: Theme) =>
       color: "#ffc000",
       textDecoration: "none",
     },
+    listItem: {
+      borderBottom: "2px solid #d3d3d3",
+    },
   })
 );
 
@@ -44,36 +47,33 @@ const ListMenu = () => {
     <div className={classes.root}>
       <List component="nav" aria-label="main mailbox folders">
         <Link className={classes.link} to="/profile/info">
-          <ListItem button>
+          <ListItem classes={{ root: classes.listItem }} button>
             <ListItemIcon>
               <InfoOutlined />
             </ListItemIcon>
             <ListItemText primary="Informace" />
           </ListItem>
         </Link>
-        <Divider />
-        <Link className={classes.link} to="/profile/settings">
+        {/* <Link className={classes.link} to="/profile/settings">
           <ListItem button>
             <ListItemIcon>
               <Settings />
             </ListItemIcon>
             <ListItemText primary="Nastavení" />
           </ListItem>
-        </Link>
-        <Divider />
+        </Link> */}
         <Link className={classes.link} to="/profile/changePassword">
-          <ListItem button>
+          <ListItem classes={{ root: classes.listItem }} button>
             <ListItemIcon>
               <Lock />
             </ListItemIcon>
             <ListItemText primary="Změna hesla" />
           </ListItem>
         </Link>
-        <Divider />
         {admin && (
           <>
             <Link className={classes.link} to="/profile/admin">
-              <ListItem button>
+              <ListItem classes={{ root: classes.listItem }} button>
                 <ListItemIcon>
                   <SupervisorAccount />
                 </ListItemIcon>
@@ -83,7 +83,7 @@ const ListMenu = () => {
           </>
         )}
         <div className={classes.link} onClick={() => logOutUser()}>
-          <ListItem button>
+          <ListItem classes={{ root: classes.listItem }} button>
             <ListItemIcon>
               <PowerSettingsNew />
             </ListItemIcon>

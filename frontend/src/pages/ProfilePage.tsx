@@ -141,7 +141,7 @@ const ProfilePage = () => {
 
   return (
     <div className={classes.root}>
-      <ProfileAppBar />
+      <ProfileAppBar userEmail={userStore.data?.email} />
       <Grid container>
         <Grid item xs={3}>
           <Paper className={classes.paper}>

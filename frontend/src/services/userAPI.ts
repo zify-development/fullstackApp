@@ -1,10 +1,16 @@
 import axios from "axios";
-
 export interface IFUser {
   email: string;
   password: string;
   _id?: string;
   createdDate?: Date;
+  blocked?: boolean;
+}
+
+export interface IFChangePassword {
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }
 
 export const getAll = {
@@ -18,7 +24,7 @@ export const getAll = {
 
 export const getUserDataByToken = {
   getData: async (token: string) => {
-    let res = await axios.get(`http://localhost:5000/api/user/data`, {
+    let res = await axios.get(`http://localhost:5000/api/user`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
@@ -36,7 +42,6 @@ export const createUser = {
       `http://localhost:5000/api/user/register`,
       currentData
     );
-    console.warn(res, "res");
     return res.data;
   },
 };
@@ -48,10 +53,24 @@ export const loginUser = {
   },
 };
 
-// todo do I want to change email?
-// export const updateUser = {
-//   update: async (data: IFUser, id: string) => {
-//     let res = await axios.post(`http://localhost:5000/api/user/login:${id}`, data);
-//     return res.data;
-//   }
-// }
+export const updateUser = {
+  update: async (data: IFUser, token: string) => {
+    let res = await axios.put(`http://localhost:5000/api/user`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  },
+};
+
+export const updatePassword = {
+  update: async (data: IFChangePassword, token: string) => {
+    let res = await axios.put(
+      `http://localhost:5000/api/user/changePassword`,
+      data,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data;
+  },
+};
