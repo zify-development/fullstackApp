@@ -4,6 +4,8 @@ import { Button, Grid, LinearProgress, Typography } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import { getUserDataByToken, updatePassword } from "../../services/userAPI";
+import { IFAlert } from "../../types/AlertTypes";
+import Alert from "../Alert";
 
 interface IFChangePassword {
   oldPassword: string;
@@ -42,27 +44,17 @@ const useStyles = makeStyles((theme: Theme) =>
 const ChangePassword = () => {
   const classes = useStyles();
   const [userData, setUserData] = useState();
+  const [alert, setAlert] = useState<IFAlert>({});
   const token = sessionStorage.getItem("token");
-  console.warn(userData, "data");
 
   const handleChangePassword = async (data: IFChangePassword) => {
     if (token) {
       const updatedPassword = await updatePassword.update(data, token);
+      setAlert(updatedPassword.statusMessage);
       if (!updatedPassword.error) {
-        alert("změna hesla byla v pohodě provedena");
         setUserData(updatedPassword.data);
       }
     }
-
-    // let login = await loginUser.login(data);
-    // const token = login.data?.token;
-    // if (token && !login.error) {
-    //     sessionStorage.setItem("token", token);
-    //     history.push("/profile/info");
-    // } else {
-    //   setAlert(login.statusMessage);
-    //   setOpen(true);
-    // }
   };
 
   const getUserData = async () => {
@@ -169,6 +161,7 @@ const ChangePassword = () => {
           )}
         </Formik>
       </div>
+      {alert && alert.message && <Alert alert={alert} showAlert={true} />}
     </div>
   );
 };

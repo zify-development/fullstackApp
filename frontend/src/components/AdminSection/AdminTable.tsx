@@ -1,7 +1,6 @@
 import React, { SyntheticEvent, useState } from "react";
 import moment from "moment";
 import { makeStyles } from "@material-ui/core/styles";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import {
   Checkbox,
   FormControlLabel,
@@ -13,9 +12,10 @@ import {
   Table,
   TableHead,
   Button,
-  Snackbar,
 } from "@material-ui/core";
 import { updateUser } from "../../services/userAPI";
+import { IFAlert } from "../../types/AlertTypes";
+import Alert from "../../components/Alert";
 
 interface IFUserTableData {
   _id: string;
@@ -23,11 +23,6 @@ interface IFUserTableData {
   createdDate: Date;
   blocked: boolean;
   password: string;
-}
-
-interface IFStateAlert {
-  message?: string;
-  type?: "error" | "success";
 }
 
 const useStyles = makeStyles({
@@ -41,8 +36,7 @@ const useStyles = makeStyles({
 
 export const AdminTable = (props: any) => {
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
-  const [alert, setAlert] = useState<IFStateAlert>({});
+  const [alert, setAlert] = useState<IFAlert>({});
   const data = props.data;
   const changeData = props.changeData;
   const token = sessionStorage.getItem("token");
@@ -56,20 +50,7 @@ export const AdminTable = (props: any) => {
       const updateUserData = await updateUser.update(currentData, token);
       changeData(true);
       setAlert(updateUserData.statusMessage);
-      setOpen(true);
     }
-  };
-
-  const Alert = (props: AlertProps) => {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  };
-
-  const handleClose = (event?: SyntheticEvent, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
   };
 
   return (
@@ -134,11 +115,7 @@ export const AdminTable = (props: any) => {
           ))}
         </TableBody>
       </Table>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={alert.type}>
-          {alert.message}
-        </Alert>
-      </Snackbar>
+      {alert && alert.message && <Alert alert={alert} showAlert={true} />}
     </TableContainer>
   );
 };

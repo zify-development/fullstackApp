@@ -7,9 +7,7 @@ import {
   Grid,
   Paper,
   Typography,
-  Snackbar,
 } from "@material-ui/core";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import { Link, useHistory } from "react-router-dom";
@@ -17,6 +15,8 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { IFRegisterFormValues } from "../types/FormTypes";
 import { createUser, loginUser, IFUser } from "../services/userAPI";
+import { IFAlert } from "../types/AlertTypes";
+import Alert from "../components/Alert";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,21 +61,15 @@ const useStyles = makeStyles((theme) => ({
 
 const RegisterPage = () => {
   const classes = useStyles();
-  const [notificationMessage, setNotificationMessage] = useState(null);
-  const [showMessage, setShowMessage] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState<IFAlert>({});
 
   let history = useHistory();
-
-  const Alert = (props: AlertProps) => {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  };
 
   const hanleRegister = async (data: IFUser) => {
     let register = await createUser.create(data);
     console.warn(register, "register");
     if (register?.status === 400) {
       setNotificationMessage(register?.data.error);
-      setShowMessage(true);
     }
 
     if (!register.error) {
@@ -201,16 +195,9 @@ const RegisterPage = () => {
           </Grid>
         </div>
       </Grid>
-
-      <Snackbar
-        open={showMessage}
-        autoHideDuration={6000}
-        onClose={() => setShowMessage(false)}
-      >
-        <Alert onClose={() => setShowMessage(false)} severity="error">
-          {notificationMessage}
-        </Alert>
-      </Snackbar>
+      {notificationMessage && notificationMessage.message && (
+        <Alert alert={notificationMessage} showAlert={true} />
+      )}
     </Grid>
   );
 };

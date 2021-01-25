@@ -7,22 +7,17 @@ import {
   Paper,
   Typography,
   LinearProgress,
-  Snackbar,
 } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import { Link, useHistory } from "react-router-dom";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { IFLoginFormValues } from "../types/FormTypes";
 import { loginUser, IFUser } from "../services/userAPI";
 import { useUserData } from "../contexts/userContext";
-
-interface IFStateAlert {
-  message?: string;
-  type?: "error" | "success";
-}
+import { IFAlert } from "../types/AlertTypes";
+import Alert from "../components/Alert";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,20 +63,7 @@ const useStyles = makeStyles((theme) => ({
 const SignInPage = () => {
   const classes = useStyles();
   const history = useHistory();
-  const [open, setOpen] = useState(false);
-  const [alert, setAlert] = useState<IFStateAlert>({});
-
-  const Alert = (props: AlertProps) => {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  };
-
-  const handleClose = (event?: SyntheticEvent, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
-  };
+  const [alert, setAlert] = useState<IFAlert>({});
 
   const handleLogin = async (data: IFUser) => {
     let login = await loginUser.login(data);
@@ -91,7 +73,6 @@ const SignInPage = () => {
       history.push("/profile/info");
     } else {
       setAlert(login.statusMessage);
-      setOpen(true);
     }
   };
   return (
@@ -189,11 +170,7 @@ const SignInPage = () => {
           </Grid>
         </div>
       </Grid>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={alert.type}>
-          {alert.message}
-        </Alert>
-      </Snackbar>
+      {alert && alert.message && <Alert alert={alert} showAlert={true} />}
     </Grid>
   );
 };

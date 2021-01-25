@@ -1,22 +1,18 @@
-import React, { SyntheticEvent, useState } from "react";
-import { Button, LinearProgress, Snackbar } from "@material-ui/core";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import React, { useState } from "react";
+import { Button, LinearProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import { createUserInfo, updateUserInfo } from "../../../services/userInfoAPI";
 import { IFUserInfoFormValues } from "../../../types/FormTypes";
 import { useUserData } from "../../../contexts/userContext";
+import { IFAlert } from "../../../types/AlertTypes";
+import Alert from "../../Alert";
 
 interface IFUserInfoFormikProps {
   userToken?: string | null;
   formValues: IFUserInfoFormValues | undefined;
   updatedForm: (updated: boolean) => void;
-}
-
-interface IFUserInfoFormikStateAlert {
-  message?: string;
-  type?: "error" | "success";
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -33,12 +29,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#ebb100",
     },
   },
-  alert: {
-    width: "100%",
-    "& > * + *": {
-      marginTop: theme.spacing(2),
-    },
-  },
 }));
 
 const UserInfoFormik = (props: IFUserInfoFormikProps) => {
@@ -50,40 +40,25 @@ const UserInfoFormik = (props: IFUserInfoFormikProps) => {
     id: "",
   };
 
-  const [open, setOpen] = useState(false);
-  const [alert, setAlert] = useState<IFUserInfoFormikStateAlert>({});
+  const [alert, setAlert] = useState<IFAlert>({});
   const userInfoStore = useUserData().context.userInfoData;
-
-  const handleClose = (event?: SyntheticEvent, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
-  };
 
   const initialValues = formValues ?? defaultValues;
   const handleSubmitUserInfoData = async (data: IFUserInfoFormValues) => {
     if (!formValues?.firstName && userToken) {
       const createUserInfoData = await createUserInfo.create(data, userToken);
       setAlert(createUserInfoData.statusMessage);
-      setOpen(true);
       if (createUserInfoData) {
         userInfoStore.setUserInfoData(createUserInfoData.userInfo);
       }
     } else if (userToken) {
       const updateUserInfoData = await updateUserInfo.update(data, userToken);
       setAlert(updateUserInfoData.statusMessage);
-      setOpen(true);
       if (updateUserInfoData) {
         userInfoStore.setUserInfoData(updateUserInfoData.userInfo);
       }
     }
     updatedForm(true);
-  };
-
-  const Alert = (props: AlertProps) => {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
   };
 
   const classes = useStyles();
@@ -162,13 +137,7 @@ const UserInfoFormik = (props: IFUserInfoFormikProps) => {
           </Form>
         )}
       </Formik>
-      <div className={classes.alert}>
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-          <Alert onClose={handleClose} severity={alert.type}>
-            {alert.message}
-          </Alert>
-        </Snackbar>
-      </div>
+      {alert && alert.message && <Alert alert={alert} showAlert={true} />}
     </>
   );
 };
