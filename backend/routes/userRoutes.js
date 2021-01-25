@@ -64,19 +64,35 @@ module.exports = (app) => {
       return res.status(200).send({
         error: true,
         statusMessage: {
+          status: 200,
           type: "error",
           message: "Vaš účet je blokován",
         },
       });
     }
-    if (!user) return res.status(400).send({ error: "Email is wrong" });
+    if (!user)
+      return res.status(200).send({
+        error: true,
+        statusMessage: {
+          status: 400,
+          type: "error",
+          message: "Účet s tím emailem neexistuje",
+        },
+      });
     // check for password correctness
     const validPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
     if (!validPassword)
-      return res.status(400).send({ error: "Password is wrong" });
+      return res.status(200).send({
+        error: true,
+        statusMessage: {
+          status: 400,
+          type: "error",
+          message: "Zadali jste špatné heslo",
+        },
+      });
     // create token
     const token = jwt.sign(
       // payload data
@@ -112,15 +128,22 @@ module.exports = (app) => {
         );
 
         if (!validPassword) {
-          return res.status(400).send("kokot špatné heslo");
+          return res.status(200).send({
+            error: true,
+            statusMessage: {
+              status: 400,
+              type: "error",
+              message: "Špatné heslo",
+            },
+          });
         }
 
         const salt = await bcrypt.genSalt(10);
-        const password = await bcrypt.hash(req.body.newPassword, salt);
+        const newPassword = await bcrypt.hash(req.body.newPassword, salt);
 
         const currentData = {
           ...decoded,
-          password: password,
+          password: newPassword,
         };
 
         await User.updateOne({ _id: decoded.id }, currentData);
