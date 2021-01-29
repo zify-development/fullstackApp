@@ -1,7 +1,6 @@
 import React from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography } from "@material-ui/core";
-import { useUserData } from "../../contexts/userContext";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,7 +14,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Settings = () => {
   const classes = useStyles();
-  const userCtx = useUserData();
 
   return (
     <div className={classes.root}>

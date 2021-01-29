@@ -8,7 +8,7 @@ export const getImagesByToken = {
 };
 
 export const uploadImage = {
-  upload: async (file: any, token: string) => {
+  upload: async (file: File, token: string) => {
     const formData = new FormData();
     formData.append("image", file);
     let res = await axios.post(

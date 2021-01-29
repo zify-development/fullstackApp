@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import moment from "moment";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -25,6 +25,11 @@ interface IFUserTableData {
   password: string;
 }
 
+interface IFAdminTableProps {
+  data: IFUserTableData[];
+  changeData: (change: boolean) => void;
+}
+
 const useStyles = makeStyles({
   tableHeader: {
     backgroundColor: "#ffc000",
@@ -34,7 +39,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const AdminTable = (props: any) => {
+export const AdminTable = (props: IFAdminTableProps) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const data = props.data;

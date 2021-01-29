@@ -3,6 +3,12 @@ import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import { grey } from "@material-ui/core/colors";
 
+interface IFProfileAvatarProps {
+  email?: string;
+  image?: string;
+  style?: object;
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -18,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ProfileAvatar = (props: any) => {
+const ProfileAvatar = (props: IFProfileAvatarProps) => {
   const { email, style, image } = props;
   const classes = useStyles();
   console.warn(image, "image in Avatar component");

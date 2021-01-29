@@ -7,7 +7,7 @@ import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import UserInfoFormik from "../components/Forms/UserInfoFormik";
 import { getUserDataByToken } from "../services/userAPI";
 import { getUserInfo } from "../services/userInfoAPI";
-import { uploadImage, getImagesByToken } from "../services/uploadFileApi";
+import { uploadImage } from "../services/uploadFileApi";
 import Settings from "../components/Settings";
 import ChangePassword from "../components/ChangePassword";
 import { useUserData } from "../contexts/userContext";
@@ -57,7 +57,6 @@ const ProfilePage = () => {
   const classes = useStyles();
   const userStore = useUserData().context.userData;
   const userInfoStore = useUserData().context.userInfoData;
-  // const userImageStore = useUserData().context.userImageData;
   const [updateForm, setUpdateForm] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const token = Cookies.get("token");
@@ -84,17 +83,9 @@ const ProfilePage = () => {
     }
   };
 
-  // const getUserImage = async () => {
-  //   const userImage = await getImagesByToken.get();
-  //   if (userImage) {
-  //     userImageStore.setUserImage(userImage);
-  //   }
-  // };
-
   useEffect(() => {
     getUserInfoData();
     getUserData();
-    // getUserImage();
   }, []);
   const renderUserData = () => {
     return (

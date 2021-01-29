@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React from "react";
 import clsx from "clsx";
 import {
   makeStyles,
@@ -6,13 +6,7 @@ import {
   Theme,
   createStyles,
 } from "@material-ui/core/styles";
-import {
-  Drawer,
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-} from "@material-ui/core";
+import { Drawer, AppBar, Toolbar, IconButton } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -90,7 +84,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Sidebar = (props: any) => {
+interface IFSideBarProps {
+  userEmail?: string;
+  userImage?: string;
+  children: React.ReactNode;
+}
+
+const Sidebar = (props: IFSideBarProps) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
