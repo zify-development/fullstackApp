@@ -20,6 +20,8 @@ const useStyles = makeStyles((theme: Theme) =>
     black: {
       color: theme.palette.common.white,
       backgroundColor: grey[900],
+      boxShadow:
+        "0px 0px 20px -1px rgba(0,0,0,0.5), 0px 10px 16px 0px rgba(0,0,0,0.2), 0px 1px 10px 0px rgba(0,0,0,0.5)",
     },
   })
 );
@@ -27,7 +29,6 @@ const useStyles = makeStyles((theme: Theme) =>
 const ProfileAvatar = (props: IFProfileAvatarProps) => {
   const { email, style, image } = props;
   const classes = useStyles();
-  console.warn(image, "image in Avatar component");
   const upperCasedEmail = email && email.toUpperCase();
   return (
     <div className={classes.root}>

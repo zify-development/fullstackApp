@@ -31,7 +31,6 @@ export const updateUserInfo = {
     let res = await axios.put(`http://localhost:5000/api/userInfo/`, data, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.warn(res, "data");
     return res.data;
   },
 };

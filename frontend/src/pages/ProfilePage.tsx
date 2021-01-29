@@ -4,10 +4,15 @@ import { Route, Switch } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useSnackbar } from "notistack";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import PublishIcon from "@material-ui/icons/Publish";
+import EditIcon from "@material-ui/icons/Edit";
 import UserInfoFormik from "../components/Forms/UserInfoFormik";
 import { getUserDataByToken } from "../services/userAPI";
 import { getUserInfo } from "../services/userInfoAPI";
-import { uploadImage } from "../services/uploadFileApi";
+import {
+  uploadProfileImage,
+  updateProfileImage,
+} from "../services/uploadFileApi";
 import Settings from "../components/Settings";
 import ChangePassword from "../components/ChangePassword";
 import { useUserData } from "../contexts/userContext";
@@ -49,6 +54,12 @@ const useStyles = makeStyles((theme: Theme) =>
       "&:hover, &:focus": {
         backgroundColor: "#ebb100",
       },
+    },
+    iconMargin: {
+      marginRight: "10px",
+    },
+    label: {
+      marginBottom: "50px",
     },
   })
 );
@@ -124,10 +135,19 @@ const ProfilePage = () => {
 
   const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadFile = e.target.files?.[0];
-    if (token && uploadFile) {
-      const userImageUpload = await uploadImage.upload(uploadFile, token);
-      if (userImageUpload) {
-        getUserInfoData();
+    if (uploadFile && token) {
+      if (!userInfoStore.infoData?.imageUrl) {
+        const createProfileImage = await uploadProfileImage.create(
+          uploadFile,
+          token
+        );
+        createProfileImage && getUserInfoData();
+      } else {
+        const updateteProfileImage = await updateProfileImage.update(
+          uploadFile,
+          token
+        );
+        updateteProfileImage && getUserInfoData();
       }
     }
   };
@@ -135,25 +155,31 @@ const ProfilePage = () => {
   const UserInfo = () => {
     return (
       <>
-        <label htmlFor="upload-file">
-          <input
-            style={{ display: "none" }}
-            id="upload-file"
-            name="upload-file"
-            type="file"
-            onChange={(e) => handleUploadImage(e)}
-          />
-
-          <ProfileAvatar
-            email={userStore.data?.email}
-            image={userInfoStore.infoData?.imageUrl}
-            style={{
-              fontSize: "70px",
-              width: "200px",
-              height: "200px",
-              marginBottom: "50px",
-            }}
-          />
+        <ProfileAvatar
+          email={userStore.data?.email}
+          image={userInfoStore.infoData?.imageUrl}
+          style={{
+            fontSize: "70px",
+            width: "200px",
+            height: "200px",
+          }}
+        />
+        <input
+          accept="image/*"
+          hidden
+          id="avatar-image-upload"
+          type="file"
+          onChange={(e) => handleUploadImage(e)}
+        />
+        <label className={classes.label} htmlFor="avatar-image-upload">
+          <Button variant="contained" color="primary" component="span">
+            {userInfoStore.infoData?.imageUrl ? (
+              <EditIcon className={classes.iconMargin} />
+            ) : (
+              <PublishIcon className={classes.iconMargin} />
+            )}
+            {userInfoStore.infoData?.imageUrl ? "Změnit" : "Nahrát"}
+          </Button>
         </label>
         <Typography variant="h4" align="center" color="textPrimary">
           Osobní informace
@@ -177,7 +203,6 @@ const ProfilePage = () => {
       </Switch>
     );
   };
-  console.warn(userInfoStore.infoData, "data");
   return (
     <div className={classes.root}>
       <Sidebar
