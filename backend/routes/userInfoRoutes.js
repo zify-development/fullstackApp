@@ -30,7 +30,6 @@ module.exports = (app) => {
             : null,
         };
 
-        console.warn(req.params, "f");
         return res.status(200).send(correctBody);
       } catch (e) {
         return res.status(401).send("unauthorized");
