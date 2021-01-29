@@ -5,6 +5,7 @@ const cors = require("cors");
 
 require("./models/User");
 require("./models/UserInfo");
+require("./models/UploadFile");
 
 const app = express();
 
@@ -18,12 +19,14 @@ mongoose.connect(
 );
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {});
 
 require("./routes/userRoutes")(app);
 require("./routes/userInfoRoutes")(app);
+require("./routes/uploadFileRoutes")(app);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));

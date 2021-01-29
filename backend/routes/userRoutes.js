@@ -19,11 +19,10 @@ module.exports = (app) => {
       try {
         decoded = verifyToken(token);
         if (decoded.role === "admin") {
-          const users = await User.find();
-          const notAdminUser = users.filter((u) => u.role !== "admin");
-          return res.status(200).send(notAdminUser);
+          const users = await User.find({ role: "user" });
+          return res.status(200).send(users);
         } else {
-          return res.status(400).send("not admin");
+          return res.status(403).send("not admin");
         }
       } catch (e) {
         return res.status(401).send("unauthorized");
@@ -37,9 +36,14 @@ module.exports = (app) => {
   app.post("/api/user/register", async (req, res) => {
     const isEmailExist = await User.findOne({ email: req.body.email });
     if (isEmailExist) {
-      return res
-        .status(400)
-        .send({ error: "Uživatel s tímto emailem už existuje" });
+      return res.status(200).send({
+        error: true,
+        statusMessage: {
+          status: 400,
+          type: "error",
+          message: "Účet s tím emailem již existuje",
+        },
+      });
     }
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(req.body.password, salt);
@@ -64,7 +68,7 @@ module.exports = (app) => {
       return res.status(200).send({
         error: true,
         statusMessage: {
-          status: 200,
+          status: 400,
           type: "error",
           message: "Vaš účet je blokován",
         },

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const UserInfo = mongoose.model("users_profile_datas");
+const uploadFile = mongoose.model("user_images");
 
 const TOKEN_SECRET = "icoders_secret";
 
@@ -10,15 +11,27 @@ const verifyToken = (token) => {
 
 module.exports = (app) => {
   // endpoint for get user info by id
-  app.get(`/api/userInfo/`, async (req, res) => {
+  app.get(`/api/userInfo`, async (req, res) => {
     if (req.headers && req.headers.authorization) {
       let authorization = req.headers.authorization,
         decoded;
       const token = authorization.split(" ")[1];
       try {
         decoded = verifyToken(token);
-        const userInfo = await UserInfo.findOne({ id: decoded.id });
-        return res.status(200).send(userInfo);
+        const userInfo = await UserInfo.findOne({ id: decoded.id }).lean();
+        const userImage = await uploadFile.findOne({ id: decoded.id });
+
+        const fullUrl = req.protocol + "://" + req.get("host");
+
+        const correctBody = {
+          ...userInfo,
+          imageUrl: userImage
+            ? `${fullUrl}/api/user/image/${userImage._id}`
+            : null,
+        };
+
+        console.warn(req.params, "f");
+        return res.status(200).send(correctBody);
       } catch (e) {
         return res.status(401).send("unauthorized");
       }
