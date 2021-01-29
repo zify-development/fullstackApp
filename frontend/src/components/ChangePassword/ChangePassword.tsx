@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
-import { Button, Grid, LinearProgress, Typography } from "@material-ui/core";
+import { Button, LinearProgress, Typography } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
+import Cookies from "js-cookie";
+import { useSnackbar } from "notistack";
 import { getUserDataByToken, updatePassword } from "../../services/userAPI";
-import { IFAlert } from "../../types/AlertTypes";
-import Alert from "../Alert";
 
 interface IFChangePassword {
   oldPassword: string;
@@ -44,13 +44,15 @@ const useStyles = makeStyles((theme: Theme) =>
 const ChangePassword = () => {
   const classes = useStyles();
   const [userData, setUserData] = useState();
-  const [alert, setAlert] = useState<IFAlert>({});
-  const token = sessionStorage.getItem("token");
+  const { enqueueSnackbar } = useSnackbar();
+  const token = Cookies.get("token");
 
   const handleChangePassword = async (data: IFChangePassword) => {
     if (token) {
       const updatedPassword = await updatePassword.update(data, token);
-      setAlert(updatedPassword.statusMessage);
+      const notification = updatedPassword.statusMessage;
+      enqueueSnackbar(notification.message, { variant: notification.type });
+
       if (!updatedPassword.error) {
         setUserData(updatedPassword.data);
       }
@@ -161,7 +163,6 @@ const ChangePassword = () => {
           )}
         </Formik>
       </div>
-      {alert && alert.message && <Alert alert={alert} showAlert={true} />}
     </div>
   );
 };

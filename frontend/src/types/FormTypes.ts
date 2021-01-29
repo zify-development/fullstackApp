@@ -13,4 +13,5 @@ export interface IFUserInfoFormValues {
   firstName?: string;
   lastName?: string;
   age?: number | null;
+  imageUrl?: string;
 }

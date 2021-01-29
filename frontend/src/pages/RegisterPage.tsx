@@ -9,14 +9,14 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
+import Cookies from "js-cookie";
+import { useSnackbar } from "notistack";
 import { TextField } from "formik-material-ui";
 import { Link, useHistory } from "react-router-dom";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { IFRegisterFormValues } from "../types/FormTypes";
 import { createUser, loginUser, IFUser } from "../services/userAPI";
-import { IFAlert } from "../types/AlertTypes";
-import Alert from "../components/Alert";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,15 +61,15 @@ const useStyles = makeStyles((theme) => ({
 
 const RegisterPage = () => {
   const classes = useStyles();
-  const [notificationMessage, setNotificationMessage] = useState<IFAlert>({});
+  const { enqueueSnackbar } = useSnackbar();
 
-  let history = useHistory();
+  const history = useHistory();
 
   const hanleRegister = async (data: IFUser) => {
-    let register = await createUser.create(data);
-    console.warn(register, "register");
-    if (register?.status === 400) {
-      setNotificationMessage(register?.data.error);
+    const register = await createUser.create(data);
+    const notification = register.statusMessage;
+    if (register?.error) {
+      enqueueSnackbar(notification.message, { variant: notification.type });
     }
 
     if (!register.error) {
@@ -77,7 +77,7 @@ const RegisterPage = () => {
       const token = login.data.token;
       if (token && !login.error) {
         if (data) {
-          sessionStorage.setItem("token", token);
+          Cookies.set("token", token);
           history.push("/profile/info");
         }
       }
@@ -195,9 +195,6 @@ const RegisterPage = () => {
           </Grid>
         </div>
       </Grid>
-      {notificationMessage && notificationMessage.message && (
-        <Alert alert={notificationMessage} showAlert={true} />
-      )}
     </Grid>
   );
 };

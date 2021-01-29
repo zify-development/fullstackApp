@@ -5,14 +5,12 @@ import ProfilePage from "./pages/ProfilePage";
 
 const App = () => {
   return (
-    <div>
-      <Switch>
-        <Route path="/" component={SignInPage} exact />
-        <Route path="/login" component={SignInPage} />
-        <Route path="/register" component={RegisterPage} />
-        <Route path="/profile" component={ProfilePage} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route path="/" component={SignInPage} exact />
+      <Route path="/login" component={SignInPage} />
+      <Route path="/register" component={RegisterPage} />
+      <Route path="/profile" component={ProfilePage} />
+    </Switch>
   );
 };
 

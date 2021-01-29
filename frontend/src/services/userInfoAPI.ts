@@ -10,7 +10,7 @@ export interface IFUserInfo {
 
 export const getUserInfo = {
   get: async (token: string) => {
-    let res = await axios.get(`http://localhost:5000/api/userInfo/`, {
+    let res = await axios.get(`http://localhost:5000/api/userInfo`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
@@ -31,6 +31,7 @@ export const updateUserInfo = {
     let res = await axios.put(`http://localhost:5000/api/userInfo/`, data, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.warn(res, "data");
     return res.data;
   },
 };

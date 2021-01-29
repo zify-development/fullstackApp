@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -13,9 +13,9 @@ import {
   TableHead,
   Button,
 } from "@material-ui/core";
+import Cookies from "js-cookie";
+import { useSnackbar } from "notistack";
 import { updateUser } from "../../services/userAPI";
-import { IFAlert } from "../../types/AlertTypes";
-import Alert from "../../components/Alert";
 
 interface IFUserTableData {
   _id: string;
@@ -36,10 +36,10 @@ const useStyles = makeStyles({
 
 export const AdminTable = (props: any) => {
   const classes = useStyles();
-  const [alert, setAlert] = useState<IFAlert>({});
+  const { enqueueSnackbar } = useSnackbar();
   const data = props.data;
   const changeData = props.changeData;
-  const token = sessionStorage.getItem("token");
+  const token = Cookies.get("token");
 
   const handleChangeBlocked = async (data: IFUserTableData) => {
     const currentData = {
@@ -48,8 +48,9 @@ export const AdminTable = (props: any) => {
     };
     if (token) {
       const updateUserData = await updateUser.update(currentData, token);
+      const notification = updateUserData.statusMessage;
       changeData(true);
-      setAlert(updateUserData.statusMessage);
+      enqueueSnackbar(notification.message, { variant: notification.type });
     }
   };
 
@@ -115,7 +116,6 @@ export const AdminTable = (props: any) => {
           ))}
         </TableBody>
       </Table>
-      {alert && alert.message && <Alert alert={alert} showAlert={true} />}
     </TableContainer>
   );
 };

@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import { Route, Switch } from "react-router-dom";
+import Cookies from "js-cookie";
+import { useSnackbar } from "notistack";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import ProfileAppBar from "../components/AppBar";
 import UserInfoFormik from "../components/Forms/UserInfoFormik";
-import ListMenu from "../components/ListMenu";
 import { getUserDataByToken } from "../services/userAPI";
 import { getUserInfo } from "../services/userInfoAPI";
-
+import { uploadImage, getImagesByToken } from "../services/uploadFileApi";
 import Settings from "../components/Settings";
 import ChangePassword from "../components/ChangePassword";
 import { useUserData } from "../contexts/userContext";
 import AdminSection from "../components/AdminSection";
+import ProfileAvatar from "../components/Avatar";
+import Sidebar from "../components/Sidebar";
 
 export interface IFUserData {
   email?: string;
@@ -23,7 +25,11 @@ export interface IFUserData {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      height: "100%",
       flexGrow: 1,
+    },
+    container: {
+      height: "calc(100% - 56px)",
     },
     paper: {
       display: "flex",
@@ -51,8 +57,10 @@ const ProfilePage = () => {
   const classes = useStyles();
   const userStore = useUserData().context.userData;
   const userInfoStore = useUserData().context.userInfoData;
+  // const userImageStore = useUserData().context.userImageData;
   const [updateForm, setUpdateForm] = useState(false);
-  const token = sessionStorage.getItem("token");
+  const { enqueueSnackbar } = useSnackbar();
+  const token = Cookies.get("token");
 
   const getUserInfoData = async () => {
     if (token) {
@@ -76,9 +84,17 @@ const ProfilePage = () => {
     }
   };
 
+  // const getUserImage = async () => {
+  //   const userImage = await getImagesByToken.get();
+  //   if (userImage) {
+  //     userImageStore.setUserImage(userImage);
+  //   }
+  // };
+
   useEffect(() => {
     getUserInfoData();
     getUserData();
+    // getUserImage();
   }, []);
   const renderUserData = () => {
     return (
@@ -108,14 +124,46 @@ const ProfilePage = () => {
         formValues={userInfoStore.infoData}
         userToken={token}
         updatedForm={(updated) => setUpdateForm(!updated)}
+        handleNotification={(notification) =>
+          enqueueSnackbar(notification.message, { variant: notification.type })
+        }
       />
     );
   };
-  console.warn(userInfoStore.infoData, "data info");
+
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadFile = e.target.files?.[0];
+    if (token && uploadFile) {
+      const userImageUpload = await uploadImage.upload(uploadFile, token);
+      if (userImageUpload) {
+        getUserInfoData();
+      }
+    }
+  };
 
   const UserInfo = () => {
     return (
       <>
+        <label htmlFor="upload-file">
+          <input
+            style={{ display: "none" }}
+            id="upload-file"
+            name="upload-file"
+            type="file"
+            onChange={(e) => handleUploadImage(e)}
+          />
+
+          <ProfileAvatar
+            email={userStore.data?.email}
+            image={userInfoStore.infoData?.imageUrl}
+            style={{
+              fontSize: "70px",
+              width: "200px",
+              height: "200px",
+              marginBottom: "50px",
+            }}
+          />
+        </label>
         <Typography variant="h4" align="center" color="textPrimary">
           Osobní informace
         </Typography>
@@ -138,20 +186,19 @@ const ProfilePage = () => {
       </Switch>
     );
   };
-
+  console.warn(userInfoStore.infoData, "data");
   return (
     <div className={classes.root}>
-      <ProfileAppBar userEmail={userStore.data?.email} />
-      <Grid container>
-        <Grid item xs={3}>
-          <Paper className={classes.paper}>
-            <ListMenu />
-          </Paper>
+      <Sidebar
+        userEmail={userStore.data?.email}
+        userImage={userInfoStore.infoData?.imageUrl}
+      >
+        <Grid className={classes.container} container>
+          <Grid item xs={12}>
+            <Paper className={classes.paper}>{renderProfileRoutes()}</Paper>
+          </Grid>
         </Grid>
-        <Grid item xs={9}>
-          <Paper className={classes.paper}>{renderProfileRoutes()}</Paper>
-        </Grid>
-      </Grid>
+      </Sidebar>
     </div>
   );
 };

@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
+import Cookies from "js-cookie";
 import { getAll } from "../../services/userAPI";
 import { AdminTable } from "./AdminTable";
 
@@ -18,7 +19,7 @@ const AdminSection = () => {
   const [allUsers, setAllUsers] = useState<[]>([]);
   const [updateData, setUpdateData] = useState<boolean>(false);
 
-  const token = sessionStorage.getItem("token");
+  const token = Cookies.get("token");
 
   const getAllUsers = async () => {
     if (token) {

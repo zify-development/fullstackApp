@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Avatar,
@@ -9,15 +9,14 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
+import Cookies from "js-cookie";
+import { useSnackbar } from "notistack";
 import { TextField } from "formik-material-ui";
 import { Link, useHistory } from "react-router-dom";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { IFLoginFormValues } from "../types/FormTypes";
 import { loginUser, IFUser } from "../services/userAPI";
-import { useUserData } from "../contexts/userContext";
-import { IFAlert } from "../types/AlertTypes";
-import Alert from "../components/Alert";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,16 +62,18 @@ const useStyles = makeStyles((theme) => ({
 const SignInPage = () => {
   const classes = useStyles();
   const history = useHistory();
-  const [alert, setAlert] = useState<IFAlert>({});
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleLogin = async (data: IFUser) => {
     let login = await loginUser.login(data);
+    const notification = login.statusMessage;
+
     const token = login.data?.token;
     if (token && !login.error) {
-      sessionStorage.setItem("token", token);
+      Cookies.set("token", token);
       history.push("/profile/info");
     } else {
-      setAlert(login.statusMessage);
+      enqueueSnackbar(notification.message, { variant: notification.type });
     }
   };
   return (
@@ -170,7 +171,6 @@ const SignInPage = () => {
           </Grid>
         </div>
       </Grid>
-      {alert && alert.message && <Alert alert={alert} showAlert={true} />}
     </Grid>
   );
 };
