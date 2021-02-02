@@ -9,11 +9,12 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
+import FacebookIcon from "@material-ui/icons/Facebook";
 import Cookies from "js-cookie";
 import { useSnackbar } from "notistack";
 import { TextField } from "formik-material-ui";
 import { Link, useHistory } from "react-router-dom";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import { makeStyles } from "@material-ui/core/styles";
 import { IFLoginFormValues } from "../types/FormTypes";
 import { loginUser, IFUser } from "../services/userAPI";
@@ -39,8 +40,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   avatar: {
+    width: "60px",
+    height: "60px",
+    color: "#000",
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: "#ffc000",
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -57,6 +61,10 @@ const useStyles = makeStyles((theme) => ({
   link: {
     color: "#16409f",
   },
+  // loginFb: {
+  //   textTransform: 'initial',
+  //   padding: '6px 10px'
+  // }
 }));
 
 const SignInPage = () => {
@@ -83,7 +91,7 @@ const SignInPage = () => {
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
           <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
+            <AccountBoxIcon style={{ fontSize: "2rem" }} />
           </Avatar>
           <Typography component="h1" variant="h5">
             Přihlášení
@@ -158,6 +166,15 @@ const SignInPage = () => {
             )}
           </Formik>
           <Grid container>
+            <Grid item xs>
+              <Button
+                className={classes.loginFb}
+                color="primary"
+                variant="contained"
+              >
+                <FacebookIcon />
+              </Button>
+            </Grid>
             <Grid item xs>
               {/* <Link to="/forgotPasword">
                 Zapomenuté heslo?

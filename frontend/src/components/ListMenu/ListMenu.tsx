@@ -5,6 +5,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import EventAvailableIcon from "@material-ui/icons/EventAvailable";
 import {
   InfoOutlined,
   // Settings,
@@ -68,6 +69,14 @@ const ListMenu = () => {
               <Lock />
             </ListItemIcon>
             <ListItemText primary="Změna hesla" />
+          </ListItem>
+        </Link>
+        <Link className={classes.link} to="/profile/calendar">
+          <ListItem classes={{ root: classes.listItem }} button>
+            <ListItemIcon>
+              <EventAvailableIcon />
+            </ListItemIcon>
+            <ListItemText primary="Můj kalendář" />
           </ListItem>
         </Link>
         {admin && (

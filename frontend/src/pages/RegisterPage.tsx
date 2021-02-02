@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 import { useSnackbar } from "notistack";
 import { TextField } from "formik-material-ui";
 import { Link, useHistory } from "react-router-dom";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import { makeStyles } from "@material-ui/core/styles";
 import { IFRegisterFormValues } from "../types/FormTypes";
 import { createUser, loginUser, IFUser } from "../services/userAPI";
@@ -39,8 +39,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   avatar: {
+    width: "60px",
+    height: "60px",
+    color: "#000",
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: "#ffc000",
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -90,7 +93,7 @@ const RegisterPage = () => {
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
           <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
+            <PersonAddIcon style={{ fontSize: "2rem" }} />
           </Avatar>
           <Typography component="h1" variant="h5">
             Registrace

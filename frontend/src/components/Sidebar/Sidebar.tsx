@@ -93,7 +93,7 @@ interface IFSideBarProps {
 const Sidebar = (props: IFSideBarProps) => {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const { userEmail, userImage } = props;
 
   const handleDrawerOpen = () => {
