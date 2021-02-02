@@ -6,6 +6,7 @@ const cors = require("cors");
 require("./models/User");
 require("./models/UserInfo");
 require("./models/UploadFile");
+require("./models/UserEvents");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.listen(PORT, () => {});
 require("./routes/userRoutes")(app);
 require("./routes/userInfoRoutes")(app);
 require("./routes/uploadFileRoutes")(app);
+require("./routes/userEventsRoutes")(app);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
