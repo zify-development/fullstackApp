@@ -9735,6 +9735,13 @@ react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
   integrity sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA==
 
+react-record-webcam@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/react-record-webcam/-/react-record-webcam-0.0.10.tgz#23196122b7862de29945f617cd1e5aebf634b89f"
+  integrity sha512-8IWxNd4MXqr2hcsrxLgzEieO53qNo3194AKgLP8SenVkDzfHUk34/+Kyy0QFjzDnO08ZFfFxeZAP5c5l0ypu7g==
+  dependencies:
+    recordrtc "^5.6.1"
+
 react-redux@^7.1.1:
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.2.tgz#03862e803a30b6b9ef8582dadcc810947f74b736"
@@ -9937,6 +9944,11 @@ readdirp@~3.5.0:
   integrity sha512-cMhu7c/8rdhkHXWsY+osBhfSy0JikwpHK/5+imo+LpeasTF8ouErHrlYkwT0++njiyuDvc7OFY5T3ukvZ8qmFQ==
   dependencies:
     picomatch "^2.2.1"
+
+recordrtc@^5.6.1:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/recordrtc/-/recordrtc-5.6.1.tgz#da876700fa149bbb230df7591a020e2c43de01c8"
+  integrity sha512-UU7Fd9IIuz60TPq4GgL1qtgo2mzEZWzPxEraNe32eo4/ndjKmuj715HB7W1k63G09teM1dXJYubPEmLkQ/lq5Q==
 
 recursive-readdir@2.2.2:
   version "2.2.2"

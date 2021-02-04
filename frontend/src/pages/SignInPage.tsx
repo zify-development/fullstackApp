@@ -61,10 +61,9 @@ const useStyles = makeStyles((theme) => ({
   link: {
     color: "#16409f",
   },
-  // loginFb: {
-  //   textTransform: 'initial',
-  //   padding: '6px 10px'
-  // }
+  loginFb: {
+    textTransform: "initial",
+  },
 }));
 
 const SignInPage = () => {

@@ -20,6 +20,7 @@ import AdminSection from "../components/AdminSection";
 import ProfileAvatar from "../components/Avatar";
 import Sidebar from "../components/Sidebar";
 import UserCalendar from "../components/UserCalendar";
+import VideoDiary from "../components/VideoDiary";
 
 export interface IFUserData {
   email?: string;
@@ -201,6 +202,7 @@ const ProfilePage = () => {
         <Route path="/profile/settings" component={Settings} />
         <Route path="/profile/changePassword" component={ChangePassword} />
         <Route path="/profile/calendar" component={UserCalendar} />
+        <Route path="/profile/videoDiary" component={VideoDiary} />
         {admin && <Route path="/profile/admin" component={AdminSection} />}
       </Switch>
     );

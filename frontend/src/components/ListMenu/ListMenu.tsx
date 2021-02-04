@@ -6,6 +6,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import EventAvailableIcon from "@material-ui/icons/EventAvailable";
+import VideocamIcon from "@material-ui/icons/Videocam";
 import {
   InfoOutlined,
   // Settings,
@@ -77,6 +78,14 @@ const ListMenu = () => {
               <EventAvailableIcon />
             </ListItemIcon>
             <ListItemText primary="Můj kalendář" />
+          </ListItem>
+        </Link>
+        <Link className={classes.link} to="/profile/videoDiary">
+          <ListItem classes={{ root: classes.listItem }} button>
+            <ListItemIcon>
+              <VideocamIcon />
+            </ListItemIcon>
+            <ListItemText primary="Můj video deník" />
           </ListItem>
         </Link>
         {admin && (
